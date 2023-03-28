@@ -1,4 +1,4 @@
-# Admin-Subdo-Scanner
+# Waduhek
 - Admin and subdomain scanner is a tool or program designed to search for administrative login pages or subdomains of a website. It works by taking a target website and trying to access different pages or subdomains by sending HTTP requests.
 # Example:
 ![Screenshot_7](https://user-images.githubusercontent.com/25004320/228120091-fd6502f6-f148-4be1-91dc-edb92f116fdd.png)
