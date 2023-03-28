@@ -39,7 +39,7 @@ def banners():
                                         Telegram: https://telegram.me/DragonForceIO
                                         
                                     Get Started With (pip install -r requirements.txt)
-                                                 Usage: python admin.py
+                                                 Usage: python Scanner.py
     {Fore.WHITE}═══════════════════════════════════════════════════════════════════════════════════════════════════════════════""")
 banners()
 
