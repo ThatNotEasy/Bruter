@@ -1,7 +1,7 @@
 # Admin-Subdo-Scanner
 - Admin and subdomain scanner is a tool or program designed to search for administrative login pages or subdomains of a website. It works by taking a target website and trying to access different pages or subdomains by sending HTTP requests.
 # Example:
-![Screenshot_3](https://user-images.githubusercontent.com/25004320/228115558-556487ba-97c8-46f4-84fd-8acb1dfcc375.png)
+![Screenshot_7](https://user-images.githubusercontent.com/25004320/228120091-fd6502f6-f148-4be1-91dc-edb92f116fdd.png)
 ![Screenshot_4](https://user-images.githubusercontent.com/25004320/228115587-d70378ea-de4d-431d-920a-2e27e7a33ed6.png)
 ![Screenshot_5](https://user-images.githubusercontent.com/25004320/228115607-345746ce-1481-4989-b484-62830c453ea9.png)
 
