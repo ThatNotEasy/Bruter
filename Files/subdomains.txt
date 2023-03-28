@@ -1,1 +1,5 @@
-
+www
+mail
+webdisk
+cpanel
+webmail
