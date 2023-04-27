@@ -1,166 +1,123 @@
-# -*- coding: utf-8 -*-
 # Author: Pari Malam
-import requests
-import os
-import time
-import sys
-import colorama
-from colorama import Back, Fore, Style, init
 
+import requests, os, sys, colorama, urllib3, concurrent.futures, signal
+from sys import stdout
+from colorama import Fore, init
+from concurrent.futures import ThreadPoolExecutor
 init(autoreset=True)
-requests.urllib3.disable_warnings()
+delete_warning = urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 if not os.path.exists('Results'):
     os.mkdir('Results')
 
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+os.system('cls' if os.name == 'nt' else 'clear')
 
-fr  =   Fore.RED
-fc  =   Fore.CYAN
-fy  =   Fore.YELLOW
-fw  =   Fore.WHITE
-fg  =   Fore.GREEN
-fm  =   Fore.MAGENTA
-            
 def banners():
-    print(f"""{Style.BRIGHT + Fore.RED}
-    ██████╗ ██████╗  █████╗  ██████╗  ██████╗ ███╗   ██╗███████╗ ██████╗ ██████╗  ██████╗███████╗   ██╗ ██████╗ 
-    ██╔══██╗██╔══██╗██╔══██╗██╔════╝ ██╔═══██╗████╗  ██║██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝   ██║██╔═══██╗
-    ██║  ██║██████╔╝███████║██║  ███╗██║   ██║██╔██╗ ██║█████╗  ██║   ██║██████╔╝██║     █████╗     ██║██║   ██║
-    ██║  ██║██╔══██╗██╔══██║██║   ██║██║   ██║██║╚██╗██║██╔══╝  ██║   ██║██╔══██╗██║     ██╔══╝     ██║██║   ██║
-    ██████╔╝██║  ██║██║  ██║╚██████╔╝╚██████╔╝██║ ╚████║██║     ╚██████╔╝██║  ██║╚██████╗███████╗██╗██║╚██████╔╝
-    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝ ╚═════╝ 
-                                                                                                                
-    {Fore.WHITE}═══════════════════════════════════════════════════════════════════════════════════════════════════════════════{Style.BRIGHT + Fore.YELLOW}  
-                                                    Coded By Pari Malam
-                                            [+] Admin Login & Subdomains Scanner [+]
-                                                   
-                                               Forum: https://dragonforce.io
-                                        Telegram: https://telegram.me/DragonForceIO
-                                        
-                                    Get Started With (pip install -r requirements.txt)
-                                                 Usage: python Scanner.py
-    {Fore.WHITE}═══════════════════════════════════════════════════════════════════════════════════════════════════════════════""")
+    stdout.write("                                                                                         \n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██████╗ ██████╗  █████╗  ██████╗  ██████╗ ███╗   ██╗███████╗ ██████╗ ██████╗  ██████╗███████╗   ██╗ ██████╗ \n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██╔══██╗██╔══██╗██╔══██╗██╔════╝ ██╔═══██╗████╗  ██║██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝   ██║██╔═══██╗\n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██║  ██║██████╔╝███████║██║  ███╗██║   ██║██╔██╗ ██║█████╗  ██║   ██║██████╔╝██║     █████╗     ██║██║   ██║\n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██║  ██║██╔══██╗██╔══██║██║   ██║██║   ██║██║╚██╗██║██╔══╝  ██║   ██║██╔══██╗██║     ██╔══╝     ██║██║   ██║\n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██║  ██║██╔══██╗██╔══██║██║   ██║██║   ██║██║╚██╗██║██╔══╝  ██║   ██║██╔══██╗██║     ██╔══╝     ██║██║   ██║\n")
+    stdout.write(""+Fore.LIGHTRED_EX +"██████╔╝██║  ██║██║  ██║╚██████╔╝╚██████╔╝██║ ╚████║██║     ╚██████╔╝██║  ██║╚██████╗███████╗██╗██║╚██████╔╝\n")
+    stdout.write(""+Fore.LIGHTRED_EX +"╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝ ╚═════╝ \n")
+    stdout.write(""+Fore.YELLOW +"═════════════╦═════════════════════════════════╦════════════════════════════════════════════════════════════\n")
+    stdout.write(""+Fore.YELLOW   +"╔════════════╩═════════════════════════════════╩═════════════════════════════╗\n")
+    stdout.write(""+Fore.YELLOW   +"║ \x1b[38;2;255;20;147m• "+Fore.GREEN+"AUTHOR             "+Fore.RED+"    |"+Fore.LIGHTWHITE_EX+"   PARI MALAM                                    "+Fore.YELLOW+"║\n")
+    stdout.write(""+Fore.YELLOW   +"║ \x1b[38;2;255;20;147m• "+Fore.GREEN+"GITHUB             "+Fore.RED+"    |"+Fore.LIGHTWHITE_EX+"   GITHUB.COM/PARI-MALAM                         "+Fore.YELLOW+"║\n")
+    stdout.write(""+Fore.YELLOW   +"╔════════════════════════════════════════════════════════════════════════════╝\n")
+    stdout.write(""+Fore.YELLOW   +"║ \x1b[38;2;255;20;147m• "+Fore.GREEN+"OFFICIAL FORUM     "+Fore.RED+"    |"+Fore.LIGHTWHITE_EX+"   DRAGONFORCE.IO                                "+Fore.YELLOW+"║\n")
+    stdout.write(""+Fore.YELLOW   +"║ \x1b[38;2;255;20;147m• "+Fore.GREEN+"OFFICIAL TELEGRAM  "+Fore.RED+"    |"+Fore.LIGHTWHITE_EX+"   TELEGRAM.ME/DRAGONFORCEIO                     "+Fore.YELLOW+"║\n")
+    stdout.write(""+Fore.YELLOW   +"╚════════════════════════════════════════════════════════════════════════════╝\n") 
+    print(f"{Fore.YELLOW}[BRUTER] - {Fore.GREEN}PERFORM WITH LOGIN FINDER & SUBDOMAIN SCANNER\n")
 banners()
 
+def pari_admin():
 
-def cls():
-    linux = 'clear'
-    windows = 'cls'
-    os.system([linux, windows][os.name == 'nt'])
+    url = input(f"{Fore.YELLOW}[DOMAIN]{Fore.RED} .: {Fore.WHITE}")
+    if not url.startswith('https://') and not url.startswith('http://'):
+        target_url = 'https://' + url
+    else:
+        target_url = url
+    with open('Files/wordlist.txt', 'r') as f:
+        admins = [admin.strip() for admin in f.readlines()]
+    num_threads = int(input(f"{Fore.YELLOW}[THREAD]{Fore.RED} .: {Fore.WHITE}"))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = []
+        for admin in admins:
+            try:
+                full_url = f"{target_url}/{admin}/"
+                headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+                future = executor.submit(check_url, full_url, headers)
+                futures.append(future)
+            except:
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [ERROR OCCURRED!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
 
-
-print(Fore.WHITE+'['+Fore.RED+'#'+Fore.WHITE+'] Example: google.com (Without HTTP/S!)')
-
-target_url = input('URLs'+Fore.RED+' :- '+Fore.GREEN+' ')
-
-print(Fore.RESET+'')
-
-if len(target_url) < 5:
-    print('['+Fore.RED+'!'+Fore.WHITE+']'+Fore.YELLOW+' Target is too short!')
-    time.sleep(3.0)
-    sys.exit()
-else:
-    pass
-
-if 'http://' in target_url or 'https://' in target_url:
-    pass
-
-if 'http://' not in target_url and 'https://' not in target_url:
-    target_url = 'https://'+target_url
-
-req = requests.Session()
-
-test = req.get(target_url, verify=False)
-
-time.sleep(5)
-
-if test.status_code == 200:
-    pass
-else:
-    print(Fore.RED+'Cant connect to target!'+Fore.WHITE+' :- '+Fore.YELLOW+''+target_url)
-    sys.exit()
-
-target_url = target_url.replace('https://', '')
-print(f'''
-Method 1:
-        Path/Dir & Admin Login Scanner
-Method 2:
-        Subdomain Scanner {target_url}
-''')
-
-select_method = input('Select Method: 1/2'+Fore.RED+' :- '+Fore.WHITE+' ')
-
-
-
-def manual_list():
-    print('['+Fore.GREEN+'*'+Fore.WHITE+'] URLs => '+Fore.GREEN+''+target_url)
-
-    words = open('Files/wordlist.txt', 'r').read().split()
-
-    for word in words:
-        try:
-            url = ('https://'+target_url+'/'+word)
-        except KeyboardInterrupt:
-            print('\nBye !')
-            time.sleep(3)
-            sys.exit()
-
-        try:
-            get_req = req.get(url, timeout=5, headers=headers)
-            if get_req.status_code == 200:
-                print(f'['+Fore.GREEN+'Found!'+Fore.WHITE+'] [w00t!] => '+target_url+'/'+word)
-                open('Results/AdminLogin.txt','a').write(url + "\n")
-            elif get_req.status_code == 301:
-                print(f'['+Fore.RED+'Moved Permanently!'+Fore.WHITE+'] [301] => '+target_url+'/'+word)
-            elif get_req.status_code == 403:
-                print(f'['+Fore.YELLOW+'Forbidden!'+Fore.WHITE+'] [403] => '+target_url+'/'+word)
-            elif get_req.status_code == 404:
-                print(f'['+Fore.RED+'URLs Not Found!'+Fore.WHITE+'] [404] => '+target_url+'/'+word)
-            elif get_req.status_code == 500:
-                print(f'['+Fore.YELLOW+'Internal Server Error!'+Fore.WHITE+'] [403] => '+target_url+'/'+word)
+        for future in concurrent.futures.as_completed(futures):
+            result, full_url = future.result()
+            if result == 200:
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.GREEN}[W00T!]")
+                open('Results/Administrators.txt', 'a').write(full_url + "\n")
+            elif result == 404:
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [NOT FOUND!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
             else:
-                print(f'['+Fore.RED+'Failed!'+Fore.WHITE+'] [{get_req.status_code}] => '+target_url+'/'+word)
-        except requests.exceptions.Timeout:
-            print(f'['+Fore.RED+'Timeout!'+Fore.WHITE+'] [Failed!] => '+target_url+'/'+word)
-        except requests.exceptions.RequestException as e:
-            print(f'['+Fore.RED+'Error!'+Fore.WHITE+'] [Failed!] => '+target_url+'/'+word)
-        except KeyboardInterrupt:
-            print('\nBye !')
-            time.sleep(3)
-            sys.exit()
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [INVALID/TIMEOUT!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
+    return False
 
 
-def sub_manual():
-    print('['+Fore.GREEN+'*'+Fore.WHITE+'] URLs => '+Fore.GREEN+''+target_url)
+def check_url(full_url, headers):
+    try:
+        response = requests.get(full_url, headers=headers, verify=True)
+        return response.status_code, full_url
+    except requests.exceptions.RequestException:
+        return None, full_url
 
+def parimalam(sub, url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+    }
+    full_url = f"http://{sub}.{url}"
+    try:
+        response = requests.get(full_url, headers=headers, verify=True)
+        if response.status_code == 200:
+            print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.GREEN}[W00T!]")
+            with open('Results/Subdomains.txt', 'a') as f:
+                f.write(full_url + "\n")
+        else:
+            print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.RED}[NOT FOUND!]")
+    except requests.exceptions.RequestException:
+        print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.RED}[INVALID/TIMEOUT!]")
+    return False
+
+def pari_subs():
+    url = input(f"{Fore.YELLOW}[DOMAIN]{Fore.RED} .: {Fore.WHITE}")
     subs = open('Files/subdomains.txt', 'r').read().split()
 
-    for sub in subs:
-        try:
-            url = ('https://'+sub+'.'+target_url)
-        except KeyboardInterrupt:
-            print('\nBye !')
-            time.sleep(3)
-            sys.exit()
+    num_threads = int(input(f"{Fore.YELLOW}[THREAD]{Fore.RED} .: [DEFAULT: 10]: {Fore.WHITE}"))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = []
+        for sub in subs:
+            futures.append(executor.submit(parimalam, sub, url))
+        
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"{Fore.YELLOW}[BRUTER] {Fore.RED}.: [ERROR!]{Fore.GREEN} - {Fore.WHITE}{str(e)}")
+    return False
 
-        try:
-            get_req = req.get(url, timeout=5, headers=headers)
-            print(f'['+Fore.GREEN+'Found!'+Fore.WHITE+'] [w00t!] => '+sub+'.'+target_url)
-            open('Results/subdomains.txt','a').write(url + "\n")
-        except Exception:
-            print(f'['+Fore.RED+'Not Found!'+Fore.WHITE+'] [Failed!] => '+sub+'.'+target_url)
-        except KeyboardInterrupt:
-            print('\nBye !')
-            time.sleep(3)
-            sys.exit()
-
-
-if select_method == '1':
-    manual_list()
-elif select_method == '2':
-    sub_manual()
-else:
-    print(Fore.RED+'[ERROR]'+Fore.WHITE+' Please enter Method 1/2! \n Enter for exit.')
-    input('')
-    sys.exit(1)
+if __name__ == '__main__':
+    try:
+        print(f"{Fore.RED}[1] - {Fore.YELLOW}LOGIN FINDER & DIRECTORY SCANNER\n{Fore.RED}[2] - {Fore.YELLOW}SUBDOMAINS SCANNER\n")
+        choice = input(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}")
+        if choice == '1':
+            pari_admin()
+            signal_handler
+        elif choice =='2':
+            pari_subs()
+            signal_handler
+        else:
+            print(f"{Fore.RED}WHUTTT ARE YOU DOIN? GO CRYYYYY!")
+    except KeyboardInterrupt:
+        print(f"{Fore.YELLOW}[Bruter] {Fore.RED}-{Fore.RED} KeyboardInterrupt!{Fore.GREEN} [BYE BITCH!]")
+        sys.exit()
