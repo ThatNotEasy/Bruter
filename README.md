@@ -1,12 +1,12 @@
-# Admin & Subdomain Scanner
+# Bruter
 - Admin and subdomain scanner is a tool or program designed to search for administrative login pages or subdomains of a website. It works by taking a target website and trying to access different pages or subdomains by sending HTTP requests.
 ## Screenshot
-![Screenshot_7](https://user-images.githubusercontent.com/25004320/228120091-fd6502f6-f148-4be1-91dc-edb92f116fdd.png)
-![Screenshot_5](https://user-images.githubusercontent.com/25004320/228115607-345746ce-1481-4989-b484-62830c453ea9.png)
+![Screenshot_8](https://user-images.githubusercontent.com/25004320/235046759-96606be2-ca80-4ed0-9e6e-c641019e8df1.png)
+
 ## Edit Our Custom Wordlist
 ```
-Files/subdomains.txt
-Files/wordlist.txt
+Wordlist/subdomains.txt
+Wordlist/wordlist.txt
 ```
 ## Requirements
 - Python3.7+
