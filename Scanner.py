@@ -10,7 +10,7 @@ delete_warning = urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarn
 if not os.path.exists('Results'):
     os.mkdir('Results')
 
-os.system('cls' if os.name == 'nt' else 'clear')
+os.system('clear' if os.name == 'posix' else 'cls')
 
 def banners():
     stdout.write("                                                                                         \n")
@@ -32,16 +32,26 @@ def banners():
     print(f"{Fore.YELLOW}[BRUTER] - {Fore.GREEN}PERFORM WITH LOGIN FINDER & SUBDOMAIN SCANNER\n")
 banners()
 
-def pari_admin():
 
+def check_url(full_url, headers):
+    try:
+        response = requests.get(full_url, headers=headers, verify=True)
+        return response.status_code, full_url
+    except requests.exceptions.RequestException:
+        return None, full_url
+
+
+def pari_admin():
     url = input(f"{Fore.YELLOW}[DOMAIN]{Fore.RED} .: {Fore.WHITE}")
     if not url.startswith('https://') and not url.startswith('http://'):
         target_url = 'https://' + url
     else:
         target_url = url
-    with open('Files/wordlist.txt', 'r') as f:
+
+    with open('Wordlist/wordlist.txt', encoding='utf8') as f:
         admins = [admin.strip() for admin in f.readlines()]
-    num_threads = int(input(f"{Fore.YELLOW}[THREAD]{Fore.RED} .: {Fore.WHITE}"))
+
+    num_threads = int(input(f"{Fore.YELLOW}[THREAD: 10-50]{Fore.RED} .: {Fore.WHITE}"))
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = []
         for admin in admins:
@@ -56,66 +66,69 @@ def pari_admin():
         for future in concurrent.futures.as_completed(futures):
             result, full_url = future.result()
             if result == 200:
-                print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.GREEN}[W00T!]")
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .:{Fore.GREEN} [W00T!]{Fore.RED} - {Fore.WHITE}{full_url}")
                 open('Results/Administrators.txt', 'a').write(full_url + "\n")
-            elif result == 404:
-                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [NOT FOUND!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
             else:
-                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [INVALID/TIMEOUT!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [NOT FOUND!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
     return False
 
 
-def check_url(full_url, headers):
+def check_subdomain(full_url, headers):
     try:
-        response = requests.get(full_url, headers=headers, verify=True)
-        return response.status_code, full_url
-    except requests.exceptions.RequestException:
-        return None, full_url
-
-def parimalam(sub, url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-    }
-    full_url = f"http://{sub}.{url}"
-    try:
-        response = requests.get(full_url, headers=headers, verify=True)
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+        response = requests.get(full_url, headers=headers, verify=False)
         if response.status_code == 200:
-            print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.GREEN}[W00T!]")
-            with open('Results/Subdomains.txt', 'a') as f:
-                f.write(full_url + "\n")
+            print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .:{Fore.GREEN} [W00T!]{Fore.RED} - {Fore.WHITE}{full_url}")
+            return (200, full_url)
         else:
-            print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.RED}[NOT FOUND!]")
-    except requests.exceptions.RequestException:
-        print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .: {Fore.WHITE}{full_url}{Fore.RED} - {Fore.RED}[INVALID/TIMEOUT!]")
-    return False
+            print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [NOT FOUND!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
+            return (response.status_code, full_url)
+    except:
+        print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [INVALID!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
+        return (0, full_url)
+
 
 def pari_subs():
     url = input(f"{Fore.YELLOW}[DOMAIN]{Fore.RED} .: {Fore.WHITE}")
-    subs = open('Files/subdomains.txt', 'r').read().split()
+    if not url.startswith('https://') and not url.startswith('http://'):
+        target_url = 'https://' + url
+    else:
+        target_url = url
 
-    num_threads = int(input(f"{Fore.YELLOW}[THREAD]{Fore.RED} .: [DEFAULT: 10]: {Fore.WHITE}"))
+    with open('Wordlist/subdomains.txt', 'r') as f:
+        subs = [sub.strip() for sub in f.readlines()]
+
+    num_threads = int(input(f"{Fore.YELLOW}[THREAD: 10-50]{Fore.RED} .: {Fore.WHITE}"))
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = []
         for sub in subs:
-            futures.append(executor.submit(parimalam, sub, url))
-        
+            headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+            full_url = f"https://{sub}.{url}"
+            future = executor.submit(check_subdomain, full_url, headers)
+            futures.append(future)
+
         for future in concurrent.futures.as_completed(futures):
-            try:
-                future.result()
-            except Exception as e:
-                print(f"{Fore.YELLOW}[BRUTER] {Fore.RED}.: [ERROR!]{Fore.GREEN} - {Fore.WHITE}{str(e)}")
-    return False
+            result, full_url = future.result()
+            if result == 200:
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .:{Fore.GREEN} [W00T!]{Fore.RED} - {Fore.WHITE}{full_url}")
+                open('Results/Subdomains.txt', 'a').write(full_url + "\n")
+            else:
+                print(f"{Fore.YELLOW}[BRUTER]{Fore.GREEN} .:{Fore.RED} [NOT FOUND!]{Fore.GREEN} - {Fore.WHITE}{full_url}")
+    return None, full_url
+
+
 
 if __name__ == '__main__':
     try:
-        print(f"{Fore.RED}[1] - {Fore.YELLOW}LOGIN FINDER & DIRECTORY SCANNER\n{Fore.RED}[2] - {Fore.YELLOW}SUBDOMAINS SCANNER\n")
-        choice = input(f"{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}")
+        choice = input(f"{Fore.RED}[1] - {Fore.YELLOW}LOGIN FINDER & DIRECTORY SCANNER\n{Fore.RED}[2] - {Fore.YELLOW}SUBDOMAINS SCANNER\n\n{Fore.YELLOW}[BRUTER]{Fore.RED} .: {Fore.WHITE}")
         if choice == '1':
+            os.system('clear' if os.name == 'posix' else 'cls')
+            banners()
             pari_admin()
-            signal_handler
         elif choice =='2':
+            os.system('clear' if os.name == 'posix' else 'cls')
+            banners()
             pari_subs()
-            signal_handler
         else:
             print(f"{Fore.RED}WHUTTT ARE YOU DOIN? GO CRYYYYY!")
     except KeyboardInterrupt:
