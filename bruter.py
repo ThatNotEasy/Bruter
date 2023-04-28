@@ -1,4 +1,11 @@
-__VareObfuscator__ = ''
+# Author: Pari Malam
+
+import requests, os, sys, colorama, urllib3, concurrent.futures
+from sys import stdout
+from colorama import Fore, init
+from concurrent.futures import ThreadPoolExecutor
+init(autoreset=True)
+delete_warning = urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def saint3794142():
     if 7226116 == 255871:
