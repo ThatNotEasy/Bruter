@@ -10,7 +10,7 @@ Wordlist/wordlist.txt
 ```
 ## Requirements
 - Python3.7+
-## Supported Operating System
+## Supported Os
 - Linuxer
 - Wingays
 ## Get start with
