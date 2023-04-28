@@ -1,5 +1,5 @@
 # Bruter
-- Admin and subdomain scanner is a tool or program designed to search for administrative login pages or subdomains of a website. It works by taking a target website and trying to access different pages or subdomains by sending HTTP requests.
+- This tool is a combination of two important functions in website security, namely the admin login page scanner and the subdomain scanner. By using this tool, you can easily identify the admin login page on your website and also scan all the subdomains associated with a particular domain. These functions help in enhancing website security and provide important information that can be used to identify potential security holes. This tool is very useful for website owners, administrators, security researchers, and penetration testers to test the security of their websites and take appropriate countermeasures.
 ## Screenshot
 ![Screenshot_8](https://user-images.githubusercontent.com/25004320/235046759-96606be2-ca80-4ed0-9e6e-c641019e8df1.png)
 ## Edit Our Custom Wordlist
